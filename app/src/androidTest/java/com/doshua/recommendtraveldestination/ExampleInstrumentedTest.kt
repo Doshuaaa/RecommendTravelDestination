@@ -1,4 +1,4 @@
-package com.example.recommendtraveldestination
+package com.doshua.recommendtraveldestination
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.recommendtraveldestination
+package com.doshua.recommendtraveldestination
 
 import org.junit.Test
 
