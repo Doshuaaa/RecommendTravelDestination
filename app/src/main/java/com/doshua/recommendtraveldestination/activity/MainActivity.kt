@@ -57,7 +57,7 @@ class MaiActivity : AppCompatActivity(), OnMapReadyCallback {
                     val currLocation = it
 
                     var currPosition: LatLng? = null
-                    currPosition = LatLng(currLocation.latitude, currLocation.longitude)
+                    currPosition = LatLng(currLocation.longitude, currLocation.latitude)
 
                     val markerOptions = MarkerOptions()
 
