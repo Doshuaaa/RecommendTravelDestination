@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.doshua.recommendtraveldestination.view_model.MapViewModel
-import com.example.recommendtraveldestination.R
-import com.example.recommendtraveldestination.databinding.ActivityMainBinding
+import com.doshua.recommendtraveldestination.R
+import com.doshua.recommendtraveldestination.databinding.ActivityMainBinding
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
