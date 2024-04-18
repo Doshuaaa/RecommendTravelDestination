@@ -12,6 +12,8 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.doshua.recommendtraveldestination.R
 import com.doshua.recommendtraveldestination.databinding.ActivitySearchNearbyTourListBinding
+import com.doshua.recommendtraveldestination.dialog.SearchNearByOptionDialog
+import com.doshua.recommendtraveldestination.view_model.SearchDialogViewModel
 import com.doshua.recommendtraveldestination.view_model.TourListViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -33,6 +35,7 @@ private lateinit var gMap: GoogleMap
 class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val tourListViewModel: TourListViewModel by viewModels()
+    private val dlgViewModel: SearchDialogViewModel by viewModels()
     private var currPosition: LatLng? = null
     private lateinit var locationCallback: LocationCallback
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -63,6 +66,10 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.loadingAnimation.cancelAnimation()
         }
 
+        dlgViewModel.thumbPosition.observe(this) {
+            searchBySetting()
+        }
+
         binding.loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener{
             override fun onAnimationStart(p0: Animator) {}
 
@@ -89,10 +96,7 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     currPosition = LatLng(currLocation.latitude, currLocation.longitude)
 
-
                     currPositionMarker.position(currPosition!!)
-
-                    tourListViewModel.setTourListLiveData(currPosition!!.longitude, currPosition!!.latitude)
 
                     gMap.addMarker(currPositionMarker)
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
@@ -146,18 +150,34 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun goToMyLocation() {
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
+        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
+    }
+
+    fun showOptionDialog() {
+        val dlg = SearchNearByOptionDialog(this, dlgViewModel, tourListViewModel, currPosition!!)
+        dlg.show(this.supportFragmentManager, "setting_dialog")
     }
 
     fun refresh() {
-        binding.loadingAnimation.playAnimation()
         gMap.clear()
+        if(dlgViewModel.searchType != 0) {
+            binding.loadingAnimation.playAnimation()
+            tourListViewModel.isLoadingLiveData.value = true
+            tourListViewModel.setTourListLiveData(currPosition!!.longitude, currPosition!!.latitude, dlgViewModel.searchType, dlgViewModel.thumbPosition.value!!)
+        }
+        getCurrLocation()
+    }
+
+    private fun searchBySetting() {
+        gMap.clear()
+        binding.loadingAnimation.playAnimation()
         tourListViewModel.isLoadingLiveData.value = true
         getCurrLocation()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         gMap = googleMap
+
         updateLocation()
     }
 }

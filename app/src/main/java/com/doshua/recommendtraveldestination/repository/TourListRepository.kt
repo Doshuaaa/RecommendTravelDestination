@@ -29,15 +29,15 @@ class TourListRepository {
     }
 
     private val retrofitService = Retrofit.Builder()
-        .baseUrl("http://apis.data.go.kr/B551011/KorService1/")
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(okHttpClient)
         .build().create(Location::class.java)
 
-    fun setTourListByLocation(tourLiveData: MutableLiveData<List<LocationRes.Item>>, latitude: Double, longitude: Double) {
+    fun setTourListByLocation(tourLiveData: MutableLiveData<List<LocationRes.Item>>, latitude: Double, longitude: Double, searchType: Int, radius: Int) {
 
         val call = retrofitService.getTourListByLocation(
-            "JSON", 10, 1, "AND",  "test", latitude, longitude, "39", "20000000")
+            "JSON", 10, 1, "AND",  "test", latitude, longitude, searchType.toString(), radius.toString())
 
         call.enqueue(object : retrofit2.Callback<LocationRes> {
             override fun onResponse(call: Call<LocationRes>, response: Response<LocationRes>) {

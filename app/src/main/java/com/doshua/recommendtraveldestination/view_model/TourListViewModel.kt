@@ -16,8 +16,8 @@ class TourListViewModel : ViewModel() {
     init {
         _isLoadingLiveData.value = true
     }
-    fun setTourListLiveData(longitude: Double, latitude: Double) {
+    fun setTourListLiveData(longitude: Double, latitude: Double, searchType: Int, radius: Int) {
 
-        repository.setTourListByLocation(_tourListLiveData, longitude, latitude)
+        repository.setTourListByLocation(_tourListLiveData, longitude, latitude, searchType, radius)
     }
 }

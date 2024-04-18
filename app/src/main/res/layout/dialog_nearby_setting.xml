@@ -4,6 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+        <variable
+            name="dlg"
+            type="com.doshua.recommendtraveldestination.dialog.SearchNearByOptionDialog" />
+        <variable
+            name="viewModel"
+            type="com.doshua.recommendtraveldestination.view_model.SearchDialogViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -38,11 +47,13 @@
                 android:layout_height="wrap_content">
 
                 <RadioGroup
+                    android:id="@+id/search_type_radio_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <RadioButton
+                        android:id="@+id/tourist"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="14dp"
@@ -56,6 +67,7 @@
                         tools:layout_editor_absoluteY="58dp" />
 
                     <RadioButton
+                        android:id="@+id/culture"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -68,6 +80,7 @@
                         tools:layout_editor_absoluteY="58dp" />
 
                     <RadioButton
+                        android:id="@+id/festival"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -80,6 +93,7 @@
                         tools:layout_editor_absoluteY="58dp" />
 
                     <RadioButton
+                        android:id="@+id/travel_course"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -92,6 +106,7 @@
                         tools:layout_editor_absoluteY="58dp" />
 
                     <RadioButton
+                        android:id="@+id/leports"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -102,6 +117,7 @@
                         android:text="레포츠" />
 
                     <RadioButton
+                        android:id="@+id/lodge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -112,6 +128,7 @@
                         android:text="숙박" />
 
                     <RadioButton
+                        android:id="@+id/shopping"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -122,6 +139,7 @@
                         android:text="쇼핑" />
 
                     <RadioButton
+                        android:id="@+id/restaurant"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="7dp"
@@ -130,13 +148,12 @@
                         android:fontFamily="@font/omyu_pretty"
                         android:padding="10dp"
                         android:text="음식점" />
-
-
                 </RadioGroup>
             </LinearLayout>
         </HorizontalScrollView>
 
         <TextView
+            android:id="@+id/text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="44dp"
@@ -150,9 +167,60 @@
             app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
         <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:progressDrawable="@drawable/layer_list_radius_seekbar_bar"
+            android:thumb="@drawable/layer_list_radius_seekbar_thumb"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view"
+            android:max="20"/>
+
+        <FrameLayout
+            android:id="@+id/radius_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="111dp"
-            tools:layout_editor_absoluteY="230dp" />
+            android:layout_marginEnd="300dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/seekBar">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@null"
+                android:src="@drawable/progress_location"
+                tools:layout_editor_absoluteX="68dp"
+                tools:layout_editor_absoluteY="202dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="3dp"
+                android:text="@{viewModel.progress}"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="76dp"
+            android:drawableStart="@drawable/baseline_search_24"
+            android:background="@drawable/shape_search_button"
+            android:text="검색하기"
+            android:textColor="#FF9800"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.829"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar"
+            android:padding="10dp"
+            android:onClick="@{() -> dlg.search()}"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
