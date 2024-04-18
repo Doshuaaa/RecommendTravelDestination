@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.doshua.recommendtraveldestination.view_model.MapViewModel" />
+        <variable
+            name="tourListViewModel"
+            type="com.doshua.recommendtraveldestination.view_model.TourListViewModel" />
+        <variable
+            name="activity"
+            type="com.doshua.recommendtraveldestination.activity.SearchNearbyTourListActivity" />
     </data>
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -24,12 +30,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="검색 설정"
-                android:layout_gravity="center"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,8 +40,56 @@
                 android:gravity="center"
                 android:visibility="@{viewModel.permissionDenied ? View.VISIBLE : View.GONE, default = visible}"/>
 
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="검색 설정"
+                android:layout_gravity="center"/>
+
+            <LinearLayout
+                android:id="@+id/loading_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/round_layout"
+                android:padding="10dp"
+                android:visibility="@{tourListViewModel.isLoadingLiveData() ? View.VISIBLE : View.GONE, default = visible}">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/loading_animation"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:lottie_rawRes="@raw/load_tour_list"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="검색중 입니다"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+
+            <ImageButton
+                android:id="@+id/imageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/refresh"
+                android:onClick="@{() -> activity.refresh()}"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>
