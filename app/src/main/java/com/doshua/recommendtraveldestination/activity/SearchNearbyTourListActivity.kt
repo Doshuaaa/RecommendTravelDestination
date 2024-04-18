@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import com.doshua.recommendtraveldestination.R
 import com.doshua.recommendtraveldestination.databinding.ActivitySearchNearbyTourListBinding
 import com.doshua.recommendtraveldestination.view_model.TourListViewModel
@@ -35,10 +34,11 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val tourListViewModel: TourListViewModel by viewModels()
     private var currPosition: LatLng? = null
-    lateinit var locationCallback: LocationCallback
-    lateinit var fusedLocationClient: FusedLocationProviderClient
-    lateinit var currPositionMarker: MarkerOptions
-    lateinit var binding: ActivitySearchNearbyTourListBinding
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val currPositionMarker by lazy {
+        MarkerOptions().title("I am here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) }
+    private lateinit var binding: ActivitySearchNearbyTourListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +49,9 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
             activity = this@SearchNearbyTourListActivity
         }
 
-        tourListViewModel.tourListLiveData.observe(this, Observer {
+        tourListViewModel.tourListLiveData.observe(this) {
 
-            for(tour in it) {
+            for (tour in it) {
                 val markerOptions = MarkerOptions()
                 markerOptions.apply {
                     title(tour.addr1)
@@ -61,33 +61,25 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
             }
             binding.loadingAnimation.cancelAnimation()
-            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
-
-        })
+        }
 
         binding.loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener{
-            override fun onAnimationStart(p0: Animator) {
+            override fun onAnimationStart(p0: Animator) {}
 
-            }
-
-            override fun onAnimationEnd(p0: Animator) {
-
-            }
+            override fun onAnimationEnd(p0: Animator) {}
 
             override fun onAnimationCancel(p0: Animator) {
                 tourListViewModel.isLoadingLiveData.value = false
             }
 
-            override fun onAnimationRepeat(p0: Animator) {
-
-            }
+            override fun onAnimationRepeat(p0: Animator) {}
 
         })
         getCurrLocation()
         startProcess()
     }
 
-    fun getCurrLocation() {
+    private fun getCurrLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         try {
@@ -98,9 +90,7 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
                     currPosition = LatLng(currLocation.latitude, currLocation.longitude)
 
 
-                    currPositionMarker = MarkerOptions().position(currPosition!!).title("I am here").icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                    )
+                    currPositionMarker.position(currPosition!!)
 
                     tourListViewModel.setTourListLiveData(currPosition!!.longitude, currPosition!!.latitude)
 
@@ -124,7 +114,9 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
                 super.onLocationResult(locationResult)
                 locationResult.let {
                     for(location in it.locations) {
-                        setLastLocation(location)
+                        if(location != null) {
+                            setLastLocation(location)
+                        }
                     }
                 }
             }
@@ -153,13 +145,15 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync (this)
     }
 
+    fun goToMyLocation() {
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
+    }
+
     fun refresh() {
-        if(!tourListViewModel.isLoadingLiveData.value!!) {
-            binding.loadingAnimation.playAnimation()
-            gMap.clear()
-            tourListViewModel.isLoadingLiveData.value = true
-            getCurrLocation()
-        }
+        binding.loadingAnimation.playAnimation()
+        gMap.clear()
+        tourListViewModel.isLoadingLiveData.value = true
+        getCurrLocation()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
