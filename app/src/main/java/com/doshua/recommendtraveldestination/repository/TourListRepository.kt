@@ -46,6 +46,7 @@ class TourListRepository {
             }
 
             override fun onFailure(call: Call<LocationRes>, t: Throwable) {
+
                 Log.e("call enqueue failure", t.message!!)
             }
         })

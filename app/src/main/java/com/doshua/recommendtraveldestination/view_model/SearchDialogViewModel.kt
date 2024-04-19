@@ -9,8 +9,16 @@ class SearchDialogViewModel : ViewModel() {
     private val _progress = MutableLiveData<String>()
     val progress get() = _progress    // radius km
 
-
-     var searchType = 0
+    private val _searchTypeLiveData = MutableLiveData<Int>()
+    val searchType get() = _searchTypeLiveData
     val thumbPosition get() = _thumbPosition
+
+    init {
+        _searchTypeLiveData.value = 12
+        _progress.value = "10000"
+
+
+        _thumbPosition.value = 12
+    }
 
 }

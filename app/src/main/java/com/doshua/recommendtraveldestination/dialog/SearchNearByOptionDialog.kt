@@ -10,18 +10,22 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginEnd
-import androidx.core.view.marginStart
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.DialogFragment
+import com.airbnb.lottie.LottieAnimationView
 import com.doshua.recommendtraveldestination.R
 import com.doshua.recommendtraveldestination.databinding.DialogNearbySettingBinding
 import com.doshua.recommendtraveldestination.view_model.SearchDialogViewModel
 import com.doshua.recommendtraveldestination.view_model.TourListViewModel
 import com.google.android.gms.maps.model.LatLng
 
-class SearchNearByOptionDialog(private val context: Context, private val dlgViewModel: SearchDialogViewModel,
-    private val tourListViewModel: TourListViewModel, private val currPosition: LatLng): DialogFragment() {
+class SearchNearByOptionDialog(
+    private val context: Context,
+    private val dlgViewModel: SearchDialogViewModel,
+    private val tourListViewModel: TourListViewModel,
+    private val currPosition: LatLng,
+    private val loadingAnimation: LottieAnimationView
+): DialogFragment() {
 
     private lateinit var binding: DialogNearbySettingBinding
     private lateinit var rect: Rect
@@ -83,16 +87,15 @@ class SearchNearByOptionDialog(private val context: Context, private val dlgView
 
         when(binding.searchTypeRadioGroup.checkedRadioButtonId) {
 
-            R.id.tourist -> dlgViewModel.searchType = 12
-            R.id.culture -> dlgViewModel.searchType = 14
-            R.id.festival -> dlgViewModel.searchType = 15
-            R.id.travel_course -> dlgViewModel.searchType = 25
-            R.id.leports -> dlgViewModel.searchType = 28
-            R.id.lodge -> dlgViewModel.searchType = 32
-            R.id.shopping -> dlgViewModel.searchType = 38
-            R.id.restaurant -> dlgViewModel.searchType = 39
+            R.id.tourist -> dlgViewModel.searchType.value = 12
+            R.id.culture -> dlgViewModel.searchType.value = 14
+            R.id.festival -> dlgViewModel.searchType.value = 15
+            R.id.travel_course -> dlgViewModel.searchType.value = 25
+            R.id.leports -> dlgViewModel.searchType.value = 28
+            R.id.lodge -> dlgViewModel.searchType.value = 32
+            R.id.shopping -> dlgViewModel.searchType.value = 38
+            R.id.restaurant -> dlgViewModel.searchType.value = 39
         }
-
-        tourListViewModel.setTourListLiveData(currPosition.longitude, currPosition.latitude, dlgViewModel.searchType, dlgViewModel.progress.value!!.toInt() * 1000)
+        dismiss()
     }
 }

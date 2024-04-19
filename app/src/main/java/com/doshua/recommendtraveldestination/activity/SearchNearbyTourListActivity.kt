@@ -66,8 +66,10 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.loadingAnimation.cancelAnimation()
         }
 
-        dlgViewModel.thumbPosition.observe(this) {
-            searchBySetting()
+        dlgViewModel.searchType.observe(this) {
+            try {
+                getCurrLocationAndSearch()
+            } catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
         }
 
         binding.loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener{
@@ -82,28 +84,34 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onAnimationRepeat(p0: Animator) {}
 
         })
-        getCurrLocation()
         startProcess()
+        getCurrLocationAndSearch()
     }
 
-    private fun getCurrLocation() {
+    private fun getCurrLocationAndSearch() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        binding.loadingAnimation.playAnimation()
+        tourListViewModel.isLoadingLiveData.value = true
 
         try {
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener {
                 if(it != null) {
+                    gMap.clear()
                     val currLocation = it
 
                     currPosition = LatLng(currLocation.latitude, currLocation.longitude)
-
                     currPositionMarker.position(currPosition!!)
 
+                    search()
+
                     gMap.addMarker(currPositionMarker)
-                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
                 }
             }
         } catch (e: SecurityException) { e.printStackTrace() }
     }
+
 
     private fun updateLocation() {
 
@@ -154,25 +162,17 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun showOptionDialog() {
-        val dlg = SearchNearByOptionDialog(this, dlgViewModel, tourListViewModel, currPosition!!)
+        val dlg = SearchNearByOptionDialog(this, dlgViewModel, tourListViewModel, currPosition!!, binding.loadingAnimation)
         dlg.show(this.supportFragmentManager, "setting_dialog")
     }
 
     fun refresh() {
-        gMap.clear()
-        if(dlgViewModel.searchType != 0) {
-            binding.loadingAnimation.playAnimation()
-            tourListViewModel.isLoadingLiveData.value = true
-            tourListViewModel.setTourListLiveData(currPosition!!.longitude, currPosition!!.latitude, dlgViewModel.searchType, dlgViewModel.thumbPosition.value!!)
-        }
-        getCurrLocation()
+
+        getCurrLocationAndSearch()
     }
 
-    private fun searchBySetting() {
-        gMap.clear()
-        binding.loadingAnimation.playAnimation()
-        tourListViewModel.isLoadingLiveData.value = true
-        getCurrLocation()
+    private fun search() {
+        tourListViewModel.setTourListLiveData(currPosition?.longitude!!, currPosition?.latitude!!, dlgViewModel.searchType.value!!, dlgViewModel.progress.value!!.toInt() * 1000)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
