@@ -15,7 +15,7 @@ class SearchDialogViewModel : ViewModel() {
 
     init {
         _searchTypeLiveData.value = 12
-        _progress.value = "10000"
+        _progress.value = "10"
 
 
         _thumbPosition.value = 12

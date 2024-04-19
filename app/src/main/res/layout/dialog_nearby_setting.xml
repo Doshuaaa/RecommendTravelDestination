@@ -6,6 +6,9 @@
 
     <data>
         <variable
+            name="R"
+            type="com.doshua.recommendtraveldestination.R" />
+        <variable
             name="dlg"
             type="com.doshua.recommendtraveldestination.dialog.SearchNearByOptionDialog" />
         <variable

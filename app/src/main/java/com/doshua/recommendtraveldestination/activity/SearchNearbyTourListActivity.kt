@@ -162,7 +162,7 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun showOptionDialog() {
-        val dlg = SearchNearByOptionDialog(this, dlgViewModel, tourListViewModel, currPosition!!, binding.loadingAnimation)
+        val dlg = SearchNearByOptionDialog(this, dlgViewModel)
         dlg.show(this.supportFragmentManager, "setting_dialog")
     }
 

@@ -37,7 +37,7 @@ class TourListRepository {
     fun setTourListByLocation(tourLiveData: MutableLiveData<List<LocationRes.Item>>, latitude: Double, longitude: Double, searchType: Int, radius: Int) {
 
         val call = retrofitService.getTourListByLocation(
-            "JSON", 10, 1, "AND",  "test", latitude, longitude, searchType.toString(), radius.toString())
+            "JSON", 30, 1, "AND",  "test", latitude, longitude, searchType.toString(), radius.toString())
 
         call.enqueue(object : retrofit2.Callback<LocationRes> {
             override fun onResponse(call: Call<LocationRes>, response: Response<LocationRes>) {
