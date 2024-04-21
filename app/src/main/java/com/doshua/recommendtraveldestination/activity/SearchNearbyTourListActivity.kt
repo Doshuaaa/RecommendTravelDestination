@@ -3,6 +3,11 @@ package com.doshua.recommendtraveldestination.activity
 import android.Manifest
 import android.animation.Animator
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -10,6 +15,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.doshua.recommendtraveldestination.R
 import com.doshua.recommendtraveldestination.databinding.ActivitySearchNearbyTourListBinding
 import com.doshua.recommendtraveldestination.dialog.SearchNearByOptionDialog
@@ -26,8 +36,12 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 private lateinit var gMap: GoogleMap
@@ -54,13 +68,57 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
         tourListViewModel.tourListLiveData.observe(this) {
 
+
             for (tour in it) {
                 val markerOptions = MarkerOptions()
-                markerOptions.apply {
-                    title(tour.addr1)
-                    position(LatLng(tour.mapy.toDouble(), tour.mapx.toDouble()))
-                }
-                gMap.addMarker(markerOptions)
+                Glide.with(this@SearchNearbyTourListActivity).load(tour.firstimage).listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        markerOptions.apply {
+                            title(tour.addr1)
+                            position(LatLng(tour.mapy.toDouble(), tour.mapx.toDouble()))
+                        }
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            gMap.addMarker(markerOptions)
+                        }
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        val icon = BitmapDescriptorFactory.fromBitmap(convertToBitmap(resource, 100, 100))
+
+                        markerOptions.apply {
+                            title(tour.addr1)
+                            position(LatLng(tour.mapy.toDouble(), tour.mapx.toDouble()))
+                            icon(icon)
+                        }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            gMap.addMarker(markerOptions)
+                        }
+
+
+                        return true
+                    }
+
+                }).submit()
+
+
+//                markerOptions.apply {
+//                    title(tour.addr1)
+//                    position(LatLng(tour.mapy.toDouble(), tour.mapx.toDouble()))
+//                }
+//                gMap.addMarker(markerOptions)
 
             }
             binding.loadingAnimation.cancelAnimation()
@@ -104,7 +162,6 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
                     currPositionMarker.position(currPosition!!)
 
                     search()
-
                     gMap.addMarker(currPositionMarker)
                     gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
                 }
@@ -173,6 +230,20 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun search() {
         tourListViewModel.setTourListLiveData(currPosition?.longitude!!, currPosition?.latitude!!, dlgViewModel.searchType.value!!, dlgViewModel.progress.value!!.toInt() * 1000)
+    }
+
+    fun convertToBitmap(drawable: Drawable, widthPixels: Int, heightPixels: Int): Bitmap {
+        val mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(mutableBitmap)
+        val color = Paint()
+        color.textSize = 35f
+        color.color = Color.CYAN
+        drawable.setBounds(0, 0, widthPixels, heightPixels)
+
+        drawable.draw(canvas)
+
+
+        return mutableBitmap
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
