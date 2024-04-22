@@ -37,7 +37,9 @@ data class LocationRes (
         val modifiedtime: String,
         val tel: String,
         val title: String,
+        val cat1: String,
+        val cat2: String,
+        val cat3: String,
+        val contextid: String,
     )
-
-
 }

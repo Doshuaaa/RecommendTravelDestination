@@ -2,6 +2,7 @@ package com.doshua.recommendtraveldestination.activity
 
 import android.Manifest
 import android.animation.Animator
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -21,6 +22,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.doshua.recommendtraveldestination.R
+import com.doshua.recommendtraveldestination.SelectedLocation
 import com.doshua.recommendtraveldestination.databinding.ActivitySearchNearbyTourListBinding
 import com.doshua.recommendtraveldestination.dialog.SearchNearByOptionDialog
 import com.doshua.recommendtraveldestination.view_model.SearchDialogViewModel
@@ -38,6 +40,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +49,7 @@ import kotlinx.coroutines.launch
 
 private lateinit var gMap: GoogleMap
 
-class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
+class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private val tourListViewModel: TourListViewModel by viewModels()
     private val dlgViewModel: SearchDialogViewModel by viewModels()
@@ -84,7 +87,16 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
 
                         CoroutineScope(Dispatchers.Main).launch {
-                            gMap.addMarker(markerOptions)
+                            tourListViewModel.addMarkerItem( gMap.addMarker(markerOptions)!!,
+                                SelectedLocation(
+                                    tour.title,
+                                    tour.addr1,
+                                    tour.mapx,
+                                    tour.mapy,
+                                    tour.tel,
+                                    tour.firstimage
+                                )
+                            )
                         }
                         return false
                     }
@@ -104,21 +116,21 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
                             icon(icon)
                         }
                         CoroutineScope(Dispatchers.Main).launch {
-                            gMap.addMarker(markerOptions)
+                            tourListViewModel.addMarkerItem( gMap.addMarker(markerOptions)!!,
+                                SelectedLocation(
+                                    tour.title,
+                                    tour.addr1,
+                                    tour.mapx,
+                                    tour.mapy,
+                                    tour.tel,
+                                    tour.firstimage
+                                )
+                            )
                         }
-
-
                         return true
                     }
-
                 }).submit()
 
-
-//                markerOptions.apply {
-//                    title(tour.addr1)
-//                    position(LatLng(tour.mapy.toDouble(), tour.mapx.toDouble()))
-//                }
-//                gMap.addMarker(markerOptions)
 
             }
             binding.loadingAnimation.cancelAnimation()
@@ -215,7 +227,9 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun goToMyLocation() {
-        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
+        try {
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPosition!!, 15f))
+        } catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
     }
 
     fun showOptionDialog() {
@@ -248,7 +262,17 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         gMap = googleMap
-
+        gMap.setOnMarkerClickListener(this)
         updateLocation()
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+
+        val selectedItem = tourListViewModel.tourListHashMapLiveDate.value!![marker]
+        val intent = Intent(this, SelectedLocationActivity::class.java)
+        intent.putExtra("selected location", selectedItem)
+        startActivity(intent)
+
+        return true
     }
 }

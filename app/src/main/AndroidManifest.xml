@@ -28,6 +28,11 @@
 
         </activity>
 
+
+        <activity
+            android:name="com.doshua.recommendtraveldestination.activity.SelectedLocationActivity"
+            android:exported="true"/>
+
         <activity android:name=".activity.SearchNearbyTourListActivity"
             android:exported="true">
             <intent-filter>
