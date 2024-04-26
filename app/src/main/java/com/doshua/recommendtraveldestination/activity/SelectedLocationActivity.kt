@@ -1,6 +1,7 @@
 package com.doshua.recommendtraveldestination.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -31,7 +32,7 @@ class SelectedLocationActivity : AppCompatActivity() {
             viewModel = selectedLocationViewModel
         }
 
-        selectedLocationViewModel.setSelectedData(item!!.name, item.address, item.phoneNumber)
+        selectedLocationViewModel.setSelectedData(item!!.name, item.address, item.phoneNumber, item.mapX, item.mapY)
     }
 
     private fun <T: Serializable> Intent.intentSerializable(key: String, clazz: Class<T>) : T? {
@@ -41,5 +42,13 @@ class SelectedLocationActivity : AppCompatActivity() {
         } else {
             this.getSerializableExtra(key) as T?
         }
+    }
+
+    fun findPathToDestination() {
+
+
+        val intent = Intent(Intent.ACTION_VIEW,
+            Uri.parse("https://www.google.com/maps/dir/?api=1&destination=${selectedLocationViewModel.selectedMapY},${selectedLocationViewModel.selectedMapX}&travelmode=driving")
+        )
     }
 }
