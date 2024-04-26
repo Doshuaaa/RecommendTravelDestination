@@ -1,7 +1,6 @@
 package com.doshua.recommendtraveldestination.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -12,27 +11,34 @@ import com.doshua.recommendtraveldestination.SelectedLocation
 import com.doshua.recommendtraveldestination.databinding.ActivitySelectedLocationBinding
 import java.io.Serializable
 import com.doshua.recommendtraveldestination.R
+import com.doshua.recommendtraveldestination.dialog.SelectedMapAppBottomSheetDialog
 import com.doshua.recommendtraveldestination.view_model.SelectedLocationViewModel
 
 class SelectedLocationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySelectedLocationBinding
     private val selectedLocationViewModel: SelectedLocationViewModel by viewModels()
+    private lateinit var item: SelectedLocation
+    private lateinit var currMapX: String
+    private lateinit var currMapY: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val item = intent.intentSerializable("selected location", SelectedLocation::class.java)
+        item = intent.intentSerializable("selected location", SelectedLocation::class.java)!!
+        currMapX = intent.getStringExtra("current mapX")!!
+        currMapY = intent.getStringExtra("current mapY")!!
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_selected_location)
 
-        Glide.with(this).load(item?.image).into(binding.locationImageView)
+        Glide.with(this).load(item.image).into(binding.locationImageView)
 
         binding.apply {
             lifecycleOwner = this@SelectedLocationActivity
             viewModel = selectedLocationViewModel
+            activity = this@SelectedLocationActivity
         }
 
-        selectedLocationViewModel.setSelectedData(item!!.name, item.address, item.phoneNumber, item.mapX, item.mapY)
+        selectedLocationViewModel.setSelectedData(item.name, item.address, item.phoneNumber, item.mapX, item.mapY)
     }
 
     private fun <T: Serializable> Intent.intentSerializable(key: String, clazz: Class<T>) : T? {
@@ -44,11 +50,8 @@ class SelectedLocationActivity : AppCompatActivity() {
         }
     }
 
-    fun findPathToDestination() {
-
-
-        val intent = Intent(Intent.ACTION_VIEW,
-            Uri.parse("https://www.google.com/maps/dir/?api=1&destination=${selectedLocationViewModel.selectedMapY},${selectedLocationViewModel.selectedMapX}&travelmode=driving")
-        )
+    fun showSelectMapAppDialog() {
+        val dialog = SelectedMapAppBottomSheetDialog(item.name, item.mapX, item.mapY, currMapX, currMapY)
+        dialog.show(supportFragmentManager, "map_bottom_sheet_dialog")
     }
 }

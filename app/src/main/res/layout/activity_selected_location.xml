@@ -2,10 +2,12 @@
 
 <layout>
     <data>
-
         <variable
             name="viewModel"
             type="com.doshua.recommendtraveldestination.view_model.SelectedLocationViewModel" />
+        <variable
+            name="activity"
+            type="com.doshua.recommendtraveldestination.activity.SelectedLocationActivity" />
     </data>
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -68,7 +70,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.065"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                app:layout_constraintTop_toBottomOf="@+id/textView5"
+                android:onClick="@{() -> activity.showSelectMapAppDialog()}"/>
 
             <TextView
                 android:id="@+id/textView2"

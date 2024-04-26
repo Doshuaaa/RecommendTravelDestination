@@ -271,6 +271,8 @@ class SearchNearbyTourListActivity : AppCompatActivity(), OnMapReadyCallback, Go
         val selectedItem = tourListViewModel.tourListHashMapLiveDate.value!![marker]
         val intent = Intent(this, SelectedLocationActivity::class.java)
         intent.putExtra("selected location", selectedItem)
+        intent.putExtra("current mapX", currPosition?.longitude.toString())
+        intent.putExtra("current mapY", currPosition?.latitude.toString())
         startActivity(intent)
 
         return true

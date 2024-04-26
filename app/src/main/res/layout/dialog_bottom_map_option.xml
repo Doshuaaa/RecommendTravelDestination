@@ -1,46 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingHorizontal="32dp"
-    android:paddingTop="24dp"
-    android:paddingBottom="40dp">
+<layout>
 
-    <TextView
+    <data>
+        <variable
+            name="dialog"
+            type="com.doshua.recommendtraveldestination.dialog.SelectedMapAppBottomSheetDialog" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="연결할 앱을 선택해주세요"
-        android:textColor="@android:color/black"
-        android:textSize="24sp" />
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="40dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="연결할 앱을 선택해주세요"
+            android:textColor="@android:color/black"
+            android:textSize="24sp" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/icon_google_map" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/icon_naver_map" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/icon_tmap" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/icon_google_map"
+                    app:civ_border_color="#E6E5E5"
+                    app:civ_border_width="1dp"
+                    android:onClick="@{() -> dialog.findPathToDestination(`google`)}"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/icon_kakao_map" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="구글 지도" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/icon_naver_map"
+                    app:civ_border_color="#E6E5E5"
+                    app:civ_border_width="1dp"
+                    android:onClick="@{() -> dialog.findPathToDestination(`naver`)}"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="네이버 지도" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="63dp"
+                    android:src="@drawable/icon_kakao_map"
+                    app:civ_border_color="#E6E5E5"
+                    app:civ_border_width="1dp"
+                    android:onClick="@{() -> dialog.findPathToDestination(`kakao`)}"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="카카오 맵" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                app:civ_border_color="#E6E5E5"
+                app:civ_border_width="1dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/icon_tmap"
+                    android:onClick="@{() -> dialog.findPathToDestination(`tmap`)}"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="티맵" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-
-
-</LinearLayout>
+</layout>
